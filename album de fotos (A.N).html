@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nosso Álbum 💖</title>
+<style>
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #ffe1ec, #ffd6f5);
+    color: #444;
+    margin: 0;
+    text-align: center;
+    animation: fadeIn 1.5s ease-in;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #e84a8a;
+    text-shadow: 1px 1px 3px #fff;
+}
+
+.upload-box {
+    margin: 20px auto;
+    background: #fff;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(255, 100, 150, 0.3);
+    width: 90%;
+    max-width: 400px;
+}
+
+.upload-box input, .upload-box button {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    background-color: #ff80b5;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #ff5e9c;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+}
+
+.photo-card {
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    width: 160px;
+    transition: transform 0.3s;
+}
+
+.photo-card:hover {
+    transform: scale(1.05);
+}
+
+.photo-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.photo-card p {
+    padding: 5px;
+    font-size: 0.9em;
+    color: #e84a8a;
+    background: #ffeaf5;
+}
+
+.clear-btn {
+    margin-top: 20px;
+    background-color: #ffb3d1;
+}
+
+footer {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+<header>
+    <h1>💞 Nosso Álbum de Amor 💞</h1>
+    <p>Cada foto, um pedacinho da nossa história</p>
+</header>
+
+<main>
+    <div class="upload-box">
+        <label for="photoInput">Escolha uma foto:</label>
+        <input type="file" id="photoInput" accept="image/*">
+        <input type="text" id="captionInput" placeholder="Escreva uma legenda fofa...">
+        <button id="addPhoto">Adicionar 💗</button>
+    </div>
+
+    <div id="gallery" class="gallery"></div>
+
+    <button id="clearAlbum" class="clear-btn">💔 Limpar Álbum</button>
+</main>
+
+<footer>
+    <p>Feito com 💕 por nós dois</p>
+</footer>
+
+<script>
+const photoInput = document.getElementById('photoInput');
+const captionInput = document.getElementById('captionInput');
+const addPhotoBtn = document.getElementById('addPhoto');
+const gallery = document.getElementById('gallery');
+const clearBtn = document.getElementById('clearAlbum');
+
+let photos = JSON.parse(localStorage.getItem('album')) || [];
+
+function renderPhotos() {
+    gallery.innerHTML = '';
+    photos.forEach((photo, index) => {
+        const div = document.createElement('div');
+        div.classList.add('photo-card');
+        div.innerHTML = `
+            <img src="${photo.src}" alt="Foto ${index}">
+            <p>${photo.caption}</p>
+        `;
+        gallery.appendChild(div);
+    });
+}
+
+addPhotoBtn.addEventListener('click', () => {
+    const file = photoInput.files[0];
+    const caption = captionInput.value.trim();
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            const newPhoto = { src: reader.result, caption: caption || 'Sem legenda 💕' };
+            photos.push(newPhoto);
+            localStorage.setItem('album', JSON.stringify(photos));
+            renderPhotos();
+            captionInput.value = '';
+            photoInput.value = '';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert('Escolha uma imagem primeiro 💖');
+    }
+});
+
+clearBtn.addEventListener('click', () => {
+    if (confirm('Tem certeza que deseja apagar o álbum? 😢')) {
+        localStorage.removeItem('album');
+        photos = [];
+        renderPhotos();
+    }
+});
+
+renderPhotos();
+</script>
+</body>
+</html>
